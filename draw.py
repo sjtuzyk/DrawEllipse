@@ -22,16 +22,12 @@ def draw_ellipse(shapes, center, a, b, phi):
     return img
 
 
-def save_Fits(clobber,file_name, img):
+def save_Fits(img, file_name, clobber=False):
     hdu = fits.PrimaryHDU(img)
-    if os.path.exists(file_name):
-        if clobber:
-            os.remove(file_name)
-            hdu.writeto(file_name)            
-        else:
-            print("Error: The file already exists.")
+    if os.path.exists(file_name) and not clobber:
+        raise FileExistsError(f'file already exists: {file_name}')
     else:
-        hdu.writeto(file_name)
+        hdu.writeto(file_name, overwrite=clobber)    
 
 
 def main():
@@ -52,9 +48,8 @@ def main():
                         type=float, 
                         required=True,
                         help="semi-minor axes")
-    parser.add_argument("-cl", "--clobber", dest="clobber",
-                        default=False,
-                        type=bool,
+    parser.add_argument("-cl", "--clobber",
+                        action='store_true', 
                         help="Overwrite original file.( default:False)")
     parser.add_argument("-s", "--size ", dest="size",
                         type=int, 
@@ -77,7 +72,7 @@ def main():
     shapes = [size, size]
     center = [args.location1,args.location2]
     img = draw_ellipse(shapes, center, a, b, phi)
-    save_Fits(args.clobber, args.outfile, img)
+    save_Fits(img, args.outfile, args.clobber)
     plt.imshow(img)
     plt.show()
 
