@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 #Author: Zhu Yong-kai (yongkai_zhu@hotmail.com)
+import os
+import argparse
 
+import math
 import matplotlib.pyplot as plt
 import numpy as np
-import math
 from astropy.io import fits
-import argparse
-import os
+
 
 
 def is_exists(file_name):
