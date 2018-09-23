@@ -27,7 +27,7 @@ def save_Fits(img, file_name, clobber=False):
     if os.path.exists(file_name) and not clobber:
         raise FileExistsError(f'file already exists: {file_name}')
     else:
-        hdu.writeto(file_name, overwrite=clobber)    
+        hdu.writeto(file_name, overwrite=clobber)
 
 
 def main():
@@ -37,22 +37,22 @@ def main():
                         required=True,
                         help="output Fits file")
     parser.add_argument("-or", "--orientation", dest="orientation",
-                        type=float, 
+                        type=float,
                         required=True,
                         help="orientation")
     parser.add_argument("-a", "--axis1 ", dest="axis1",
-                        type=float, 
+                        type=float,
                         required=True,
                         help="semi-major axes ")
     parser.add_argument("-b", "--axis2", dest="axis2",
-                        type=float, 
+                        type=float,
                         required=True,
                         help="semi-minor axes")
     parser.add_argument("-cl", "--clobber",
-                        action='store_true', 
+                        action='store_true',
                         help="Overwrite original file.( default:False)")
     parser.add_argument("-s", "--size ", dest="size",
-                        type=int, 
+                        type=int,
                         required=True,
                         help="image size ")
     parser.add_argument("-l1", "--location1", dest="location1",
@@ -68,9 +68,8 @@ def main():
     a = args.axis1
     b = args.axis2
     phi = args.orientation
-    size=args.size
-    shapes = [size, size]
-    center = [args.location1,args.location2]
+    shapes = [args.size, args.size]
+    center = [args.location1, args.location2]
     img = draw_ellipse(shapes, center, a, b, phi)
     save_Fits(img, args.outfile, args.clobber)
     plt.imshow(img)
