@@ -6,9 +6,28 @@ import numpy as np
 import math
 from astropy.io import fits
 import argparse
+import os
 
 
-def EllipseShape(shapes, center, a, b, phi):
+def is_exists(file_name):
+    n=[0]
+    if os.path.exists(file_name):
+        print("Given file path is exist. ")
+       # override_rename = raw_input("Override file or Rename it. (r/o):")
+        override_rename = 'r'
+        if override_rename == 'r':
+            file_name_new=os.path.splitext(file_name)[0]+str(n[0])+'.fits'
+            while os.path.exists(file_name_new):
+                n[0]+=1
+                file_name_new=os.path.splitext(file_name)[0]+str(n[0])+'.fits'
+        else:
+            os.remove(file_name)
+    else:
+        file_name_new = file_name
+    return file_name_new
+    
+
+def draw_ellipse(shapes, center, a, b, phi):
     phi = math.radians(phi)
     points1 = np.arange(0, shapes[0])
     points2 = np.arange(0, shapes[1])
@@ -21,9 +40,10 @@ def EllipseShape(shapes, center, a, b, phi):
     return img
 
 
-def Img2Fits(filename, img):
+def save_Fits(file_name, img):
+    file_name=is_exists(file_name)
     hdu = fits.PrimaryHDU(img)
-    hdu.writeto(str(filename))
+    hdu.writeto(str(file_name))
 
 
 def main():
@@ -34,26 +54,26 @@ def main():
                         help="output Ellipse Fits file " +
                         "(default: ERT.fits)")
     parser.add_argument("-or", "--orientation", dest="orientation",
-                        type=float, default=60,
+                        type=float, 
+                        required=True,
                         help="orientation")
     parser.add_argument("-a", "--axis1 ", dest="axis1",
-                        type=float, default=60,
-                        help="long semi-axis ")
+                        type=float, 
+                        required=True,
+                        help="semi-major axes ")
     parser.add_argument("-b", "--axis2", dest="axis2",
-                        type=float, default=40,
-                        help="short semi-axis")
-
+                        type=float, 
+                        required=True,
+                        help="semi-minor axes")
     args = parser.parse_args()
 
     a = args.axis1
     b = args.axis2
     phi = args.orientation
-    shapes = [150, 150]
-    center = [60, 60]
-    a = 60
-    b = 40
-    img = EllipseShape(shapes, center, a, b, phi)
-    Img2Fits(args.outfile, img)
+    shapes = [2.5*a, 2.5*a]
+    center = [2.5*a/2, 2.5*a/2]
+    img = draw_ellipse(shapes, center, a, b, phi)
+    save_Fits(args.outfile, img)
     plt.imshow(img)
     plt.show()
 
