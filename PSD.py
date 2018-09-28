@@ -112,7 +112,6 @@ def main():
             raise FileExistsError(f'file already exists:{i}')
 
     img = fits.open(args.inputfile)
-    inputfile='cluster.fits'
     img = fits.open(inputfile)
     img = img[0].data
     psd = PSD(image=img, pixel=args.pixel, step=args.step)
